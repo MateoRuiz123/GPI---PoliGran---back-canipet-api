@@ -1,0 +1,94 @@
+@startuml DiagramaSecuencia_GestionAgenda
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceParticipant underline
+
+title Diagrama de Secuencia - Gestión de Agenda (Veterinario/Administrador)
+
+actor "Veterinario /\nAdministrador" as V
+participant "Interfaz Web" as IW
+participant "Controlador\nAutenticación" as CA
+participant "Controlador\nCitas" as CC
+database "Base de Datos" as BD
+
+' ========== 1. INICIO DE SESIÓN ==========
+== Autenticación ==
+
+V -> IW : Ingresa correo y contraseña
+activate IW
+
+IW -> CA : iniciarSesion(correo, contraseña)
+activate CA
+
+CA -> BD : validarCredenciales(correo, contraseña)
+activate BD
+BD --> CA : credenciales válidas (rol=VETERINARIO)
+deactivate BD
+
+CA --> IW : sesión iniciada (token, rol)
+deactivate CA
+
+IW --> V : Muestra panel de administración
+deactivate IW
+
+' ========== 2. CONSULTAR AGENDA ==========
+== Consulta de Citas Programadas ==
+
+V -> IW : Selecciona "Gestionar Agenda"
+activate IW
+
+IW -> CC : consultarCitasProgramadas(id_veterinario)
+activate CC
+
+CC -> BD : obtenerCitas(estado="AGENDADA")
+activate BD
+BD --> CC : lista de citas pendientes\n(usuario, mascota, servicio, fecha, hora)
+deactivate BD
+
+CC --> IW : retorna lista de citas
+deactivate CC
+
+IW --> V : Muestra agenda con citas pendientes
+deactivate IW
+
+' ========== 3. ACEPTAR CITA ==========
+== Aceptar Cita ==
+
+V -> IW : Selecciona una cita y presiona "Aceptar"
+activate IW
+
+IW -> CC : aceptarCita(id_cita, id_veterinario)
+activate CC
+
+CC -> BD : actualizarEstado(id_cita,\nestado="ATENDIDA", id_veterinario)
+activate BD
+BD --> CC : estado actualizado
+deactivate BD
+
+CC --> IW : confirmación de aceptación
+deactivate CC
+
+IW --> V : Muestra mensaje:\n"Cita aceptada exitosamente"
+deactivate IW
+
+' ========== 4. CANCELAR CITA (ALTERNATIVA) ==========
+== Cancelar Cita (Flujo alternativo) ==
+
+V -> IW : Selecciona una cita y presiona "Cancelar"
+activate IW
+
+IW -> CC : cancelarCita(id_cita)
+activate CC
+
+CC -> BD : actualizarEstado(id_cita,\nestado="CANCELADA")
+activate BD
+BD --> CC : estado actualizado
+deactivate BD
+
+CC --> IW : confirmación de cancelación
+deactivate CC
+
+IW --> V : Muestra mensaje:\n"Cita cancelada exitosamente"
+deactivate IW
+
+@enduml
