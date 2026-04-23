@@ -1,0 +1,116 @@
+@startuml DiagramaDeClases
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor #FEFECE
+    BorderColor #A80036
+    ArrowColor #A80036
+}
+
+title Diagrama de Clases - Sistema de Atención Preventiva y Correctiva de Caninos
+
+' ========== CLASES ==========
+
+class Usuario {
+    - id_usuario : int <<PK>>
+    - nombre : String
+    - correo : String
+    - contraseña : String
+    - telefono : String
+    - rol : String
+    --
+    + registrarCuenta() : void
+    + iniciarSesion(correo, contraseña) : boolean
+    + cerrarSesion() : void
+    + actualizarPerfil() : void
+}
+
+class Mascota {
+    - id_mascota : int <<PK>>
+    - nombre : String
+    - raza : String
+    - edad : int
+    - id_usuario : int <<FK>>
+    --
+    + registrarMascota() : void
+    + editarMascota() : void
+    + eliminarMascota() : void
+    + consultarMascota() : Mascota
+}
+
+class Servicio {
+    - id_servicio : int <<PK>>
+    - nombre : String
+    - descripcion : String
+    - categoria : String
+    --
+    + consultarCatalogo() : List<Servicio>
+    + filtrarPorCategoria(categoria) : List<Servicio>
+    + obtenerDetalle() : Servicio
+}
+
+class Cita {
+    - id_cita : int <<PK>>
+    - fecha : Date
+    - hora : Time
+    - estado : String
+    - id_usuario : int <<FK>>
+    - id_mascota : int <<FK>>
+    - id_servicio : int <<FK>>
+    - id_veterinario : int <<FK>>
+    --
+    + agendarCita() : void
+    + cancelarCita() : void
+    + consultarCitas() : List<Cita>
+    + cambiarEstado(estado) : void
+}
+
+class Veterinario {
+    - id_veterinario : int <<PK>>
+    - nombre : String
+    - especialidad : String
+    - telefono : String
+    - id_usuario : int <<FK>>
+    --
+    + gestionarAgenda() : List<Cita>
+    + aceptarCita(id_cita) : void
+    + cancelarCita(id_cita) : void
+    + consultarCitasProgramadas() : List<Cita>
+}
+
+' ========== ENUMERACIONES ==========
+
+enum RolUsuario {
+    USUARIO
+    VETERINARIO
+    ADMIN
+}
+
+enum EstadoCita {
+    AGENDADA
+    CANCELADA
+    ATENDIDA
+}
+
+enum CategoriaServicio {
+    SALUD
+    ESTETICA
+    NUTRICION
+    GUARDERIA
+    FUNERARIA
+}
+
+' ========== RELACIONES ==========
+
+Usuario "1" -- "0..*" Mascota : tiene >
+Usuario "1" -- "0..*" Cita : agenda >
+Mascota "1" -- "0..*" Cita : se asocia a >
+Servicio "1" -- "0..*" Cita : se solicita en >
+Veterinario "1" -- "0..*" Cita : atiende >
+Usuario "1" -- "0..1" Veterinario : puede ser >
+
+Usuario ..> RolUsuario : usa
+Cita ..> EstadoCita : usa
+Servicio ..> CategoriaServicio : usa
+
+@enduml

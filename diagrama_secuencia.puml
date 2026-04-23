@@ -1,0 +1,111 @@
+@startuml DiagramaSecuencia_AgendarCita
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceParticipant underline
+
+title Diagrama de Secuencia - Agendar Cita para Servicio Veterinario
+
+actor "Usuario\n(Dueño del canino)" as U
+participant "Interfaz Web" as IW
+participant "Controlador\nAutenticación" as CA
+participant "Controlador\nServicios" as CS
+participant "Controlador\nCitas" as CC
+database "Base de Datos" as BD
+
+' ========== 1. INICIO DE SESIÓN ==========
+== Autenticación ==
+
+U -> IW : Ingresa correo y contraseña
+activate IW
+
+IW -> CA : iniciarSesion(correo, contraseña)
+activate CA
+
+CA -> BD : validarCredenciales(correo, contraseña)
+activate BD
+BD --> CA : credenciales válidas
+deactivate BD
+
+CA --> IW : sesión iniciada (token)
+deactivate CA
+
+IW --> U : Muestra panel principal
+deactivate IW
+
+' ========== 2. CONSULTAR CATÁLOGO ==========
+== Consulta de Servicios ==
+
+U -> IW : Selecciona "Consultar Servicios"
+activate IW
+
+IW -> CS : consultarCatalogo()
+activate CS
+
+CS -> BD : obtenerServicios()
+activate BD
+BD --> CS : lista de servicios por categoría\n(salud, estética, nutrición,\nguardería, funeraria)
+deactivate BD
+
+CS --> IW : retorna catálogo de servicios
+deactivate CS
+
+IW --> U : Muestra catálogo categorizado
+deactivate IW
+
+' ========== 3. SELECCIONAR SERVICIO ==========
+== Selección de Servicio y Mascota ==
+
+U -> IW : Selecciona un servicio del catálogo
+activate IW
+
+IW -> CS : obtenerDetalle(id_servicio)
+activate CS
+
+CS -> BD : consultarServicio(id_servicio)
+activate BD
+BD --> CS : detalle del servicio
+deactivate BD
+
+CS --> IW : información del servicio
+deactivate CS
+
+IW --> U : Muestra detalle del servicio
+deactivate IW
+
+U -> IW : Selecciona mascota registrada
+activate IW
+
+IW -> BD : obtenerMascotas(id_usuario)
+activate BD
+BD --> IW : lista de mascotas del usuario
+deactivate BD
+
+IW --> U : Muestra mascotas disponibles
+deactivate IW
+
+' ========== 4. AGENDAR CITA ==========
+== Agendamiento de Cita ==
+
+U -> IW : Selecciona fecha, hora y confirma
+activate IW
+
+IW -> CC : agendarCita(id_usuario, id_mascota,\nid_servicio, fecha, hora)
+activate CC
+
+CC -> BD : verificarDisponibilidad(fecha, hora)
+activate BD
+BD --> CC : horario disponible
+deactivate BD
+
+CC -> BD : crearCita(id_usuario, id_mascota,\nid_servicio, fecha, hora, estado="AGENDADA")
+activate BD
+BD --> CC : cita registrada exitosamente
+deactivate BD
+
+CC --> IW : confirmación de agendamiento
+deactivate CC
+
+IW --> U : Muestra mensaje:\n"Cita agendada exitosamente"
+deactivate IW
+
+@enduml
