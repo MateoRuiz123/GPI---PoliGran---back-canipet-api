@@ -7,6 +7,7 @@ import { PetsModule } from './pets/pets.module';
 import { ServicesModule } from './services/services.module';
 import { VetsModule } from './vets/vets.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
     ServicesModule,
     VetsModule,
     AppointmentsModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
