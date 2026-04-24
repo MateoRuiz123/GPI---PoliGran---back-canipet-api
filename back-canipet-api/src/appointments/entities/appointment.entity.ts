@@ -1,7 +1,7 @@
 import { Pet } from 'src/pets/entities/pet.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Vet } from 'src/vets/entities/ver.entity';
+import { Vet } from 'src/vets/entities/vet.entity';
 import {
   Entity,
   Unique,
