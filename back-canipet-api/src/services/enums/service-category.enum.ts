@@ -1,0 +1,7 @@
+export enum ServiceCategory {
+  SALUD = 'SALUD',
+  ESTETICA = 'ESTETICA',
+  NUTRICION = 'NUTRICION',
+  GUARDERIA = 'GUARDERIA',
+  FUNERARIA = 'FUNERARIA',
+}
