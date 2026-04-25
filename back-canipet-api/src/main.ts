@@ -5,6 +5,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors({
+    origin: ['http://localhost:3001'],
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('GPI - Atención Caninos API')
     .setDescription('Backend del sistema de atención preventiva y correctiva')

@@ -72,7 +72,7 @@ export class AppointmentsService {
   findMine(userId: number) {
     return this.repo.find({
       where: { id_usuario: userId },
-      relations: ['mascota', 'servicio', 'veteriario'],
+      relations: ['mascota', 'servicio', 'veterinario'],
       order: { fecha: 'ASC', hora: 'ASC' },
     });
   }
