@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
+import { Role } from 'src/users/enums/role.enum';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
 import { LoginDto } from './dto/login.dto';
@@ -14,7 +15,10 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const u = await this.users.create(dto);
+    // Por seguridad, el registro público SIEMPRE crea usuarios con rol USUARIO,
+    // sin importar lo que mande el cliente. Para crear VETERINARIO/ADMIN
+    // se debe usar POST /users (protegido para ADMIN).
+    const u = await this.users.create({ ...dto, rol: Role.USUARIO });
     return this.signToken(u.id_usuario, u.correo, u.rol);
   }
 

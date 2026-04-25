@@ -68,10 +68,11 @@ function Screen() {
       />
 
       <Alert tone="info" className="mb-4">
-        <strong>Tip:</strong> primero registra el usuario base con rol{" "}
-        <code className="rounded bg-white/60 px-1">VETERINARIO</code> en{" "}
-        <code className="rounded bg-white/60 px-1">/register</code>, luego usa
-        ese <code className="rounded bg-white/60 px-1">id_usuario</code> aquí.
+        <strong>Tip:</strong> primero crea el usuario base con rol{" "}
+        <code className="rounded bg-white/60 px-1">VETERINARIO</code> desde{" "}
+        <code className="rounded bg-white/60 px-1">/admin/users</code>, luego
+        usa ese <code className="rounded bg-white/60 px-1">id_usuario</code>{" "}
+        aquí para completar su ficha profesional.
       </Alert>
 
       {error && <Alert tone="error" className="mb-4">{error}</Alert>}
