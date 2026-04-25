@@ -6,6 +6,7 @@ import {
   Dog,
   ShieldCheck,
   Stethoscope,
+  Users,
   Wrench,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,6 +49,13 @@ const tiles: Tile[] = [
     description: "Atiende o cancela citas asignadas.",
     icon: Stethoscope,
     roles: ["VETERINARIO", "ADMIN"],
+  },
+  {
+    href: "/admin/users",
+    label: "Usuarios",
+    description: "Crea y administra usuarios y roles.",
+    icon: Users,
+    roles: ["ADMIN"],
   },
   {
     href: "/admin/vets",

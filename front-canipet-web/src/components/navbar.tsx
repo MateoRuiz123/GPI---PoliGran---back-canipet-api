@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Dog, LogOut, PawPrint, ShieldCheck, Stethoscope, Wrench } from "lucide-react";
+import { CalendarDays, Dog, LogOut, PawPrint, ShieldCheck, Stethoscope, Users, Wrench } from "lucide-react";
 import { Role } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/cn";
@@ -21,6 +21,7 @@ const links: NavLink[] = [
   { href: "/services", label: "Servicios", icon: Wrench },
   { href: "/appointments", label: "Mis citas", icon: CalendarDays, roles: ["USUARIO", "ADMIN"] },
   { href: "/agenda", label: "Agenda", icon: Stethoscope, roles: ["VETERINARIO", "ADMIN"] },
+  { href: "/admin/users", label: "Usuarios", icon: Users, roles: ["ADMIN"] },
   { href: "/admin/vets", label: "Veterinarios", icon: ShieldCheck, roles: ["ADMIN"] },
 ];
 

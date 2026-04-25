@@ -25,13 +25,15 @@ export class UsersService {
     return this.sanitize(await this.repo.save(user));
   }
 
-  findAll() {
-    return this.repo.find();
+  async findAll() {
+    const users = await this.repo.find({ order: { id_usuario: 'ASC' } });
+    return users.map((u) => this.sanitize(u));
   }
 
   async findOne(id: number) {
     const user = await this.repo.findOne({ where: { id_usuario: id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
+    return this.sanitize(user);
   }
 
   // Para uso internos del módulo auth (necesita hash)

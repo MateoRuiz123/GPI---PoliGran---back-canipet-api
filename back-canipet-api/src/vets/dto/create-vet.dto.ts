@@ -16,5 +16,5 @@ export class CreateVetDto {
 
   // id del usuario base (rol VETERINARIO) ya creado via /api/auth/register
   @IsInt()
-  id_usuaio: number;
+  id_usuario: number;
 }
