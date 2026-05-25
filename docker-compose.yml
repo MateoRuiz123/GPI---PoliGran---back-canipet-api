@@ -1,16 +1,82 @@
+# ────────────────────────────────────────────────────────────
+# Red interna: todos los servicios se ven por nombre de host
+# ────────────────────────────────────────────────────────────
+networks:
+  canipet_net:
+    driver: bridge
+
+# ────────────────────────────────────────────────────────────
+# Volumen persistente para PostgreSQL
+# ────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: gpi_postgres
+
+  # ── 1. Base de datos ──────────────────────────────────────
+  db:
+    image: postgres:17-alpine
+    container_name: canipet_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: gpi_user
-      POSTGRES_PASSWORD: gpi_pass
-      POSTGRES_DB: gpi_db
+      POSTGRES_USER: canipet
+      POSTGRES_PASSWORD: canipet_pass
+      POSTGRES_DB: canipet_db
     ports:
-      - '5432:5432'
+      - "5433:5432"          # Puerto 5433 en host para evitar conflictos
     volumes:
-      - gpi_pg_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - canipet_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U canipet -d canipet_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-volumes:
-  gpi_pg_data:
+  # ── 2. Backend NestJS ─────────────────────────────────────
+  backend:
+    build:
+      context: ./back-canipet-api
+      dockerfile: Dockerfile
+    container_name: canipet_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Conexión a la BD — usa el nombre del servicio "db" como host
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: canipet
+      DB_PASSWORD: canipet_pass
+      DB_NAME: canipet_db
+      # JWT — cambia estos valores en producción
+      JWT_SECRET: super_secret_jwt_canipet_2025
+      JWT_EXPIRES_IN: 7d
+    ports:
+      - "3000:3000"          # expone el API al host
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - canipet_net
+
+  # ── 3. Frontend Next.js ───────────────────────────────────
+  frontend:
+    build:
+      context: ./front-canipet-web
+      dockerfile: Dockerfile
+      args:
+        # Desde el browser el usuario accede al backend por localhost:3000
+        NEXT_PUBLIC_API_URL: http://localhost:3000/api
+    container_name: canipet_frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    networks:
+      - canipet_net

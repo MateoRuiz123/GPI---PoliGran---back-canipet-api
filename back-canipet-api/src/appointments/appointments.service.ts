@@ -72,7 +72,7 @@ export class AppointmentsService {
   findMine(userId: number) {
     return this.repo.find({
       where: { id_usuario: userId },
-      relations: ['mascota', 'servicio', 'veterinario'],
+      relations: { mascota: true, servicio: true, veterinario: true },
       order: { fecha: 'ASC', hora: 'ASC' },
     });
   }
@@ -95,7 +95,7 @@ export class AppointmentsService {
 
     return this.repo.find({
       where,
-      relations: ['usuario', 'mascota', 'servicio', 'veterinario'],
+      relations: { usuario: true, mascota: true, servicio: true, veterinario: true },
       order: { fecha: 'ASC', hora: 'ASC' },
     });
   }
@@ -103,7 +103,7 @@ export class AppointmentsService {
   async findOne(id: number) {
     const cita = await this.repo.findOne({
       where: { id_cita: id },
-      relations: ['usuario', 'mascota', 'servicio', 'veterinario'],
+      relations: { usuario: true, mascota: true, servicio: true, veterinario: true },
     });
     if (!cita) throw new NotFoundException('Cita no encontrada');
     return cita;
